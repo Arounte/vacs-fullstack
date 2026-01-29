@@ -3,7 +3,8 @@ import type {
     GetServerSidePropsContext,
     GetServerSidePropsResult,
     Redirect,
-} from "next";
+} from 'next';
+import { serialize } from 'seroval';
 
 type ControllerResult<StoreProps, PageProps> =
     | { storeProps?: StoreProps; pageProps?: PageProps }
@@ -27,9 +28,7 @@ export function withServerSidePageController<
     ) => Promise<ControllerResult<StoreProps, PageProps> | object>,
     middlewares?: Middleware<StoreProps, PageProps>[],
 ): GetServerSideProps<{ storeProps: StoreProps; pageProps: PageProps }> {
-    return async function getServerSideProps(
-        context: GetServerSidePropsContext,
-    ): Promise<
+    return async function getServerSideProps(context: GetServerSidePropsContext): Promise<
         GetServerSidePropsResult<{
             storeProps: StoreProps;
             pageProps: PageProps;
@@ -47,11 +46,11 @@ export function withServerSidePageController<
             for (const middleware of middlewares) {
                 const result = await middleware(context);
 
-                if ("redirect" in result) {
+                if ('redirect' in result) {
                     return { redirect: result.redirect };
                 }
 
-                if ("notFound" in result) {
+                if ('notFound' in result) {
                     return { notFound: true };
                 }
 
@@ -71,16 +70,16 @@ export function withServerSidePageController<
             }
         }
 
-        const result = (await handler?.(
-            context,
-            accumulatedData,
-        )) as ControllerResult<StoreProps, PageProps>;
+        const result = (await handler?.(context, accumulatedData)) as ControllerResult<
+            StoreProps,
+            PageProps
+        >;
 
-        if (result && "redirect" in result) {
+        if (result && 'redirect' in result) {
             return { redirect: result.redirect };
         }
 
-        if (result && "notFound" in result) {
+        if (result && 'notFound' in result) {
             return result;
         }
 
@@ -101,7 +100,7 @@ export function withServerSidePageController<
         return {
             props: {
                 storeProps: accumulatedData.storeProps as StoreProps,
-                pageProps: accumulatedData.pageProps as PageProps,
+                pageProps: serialize(accumulatedData.pageProps) as unknown as PageProps,
             },
         };
     };

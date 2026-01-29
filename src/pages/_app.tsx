@@ -10,11 +10,13 @@ import { useLayoutEffect } from 'react';
 import '@/globals.css';
 import 'primeicons/primeicons.css';
 import 'primereact/resources/themes/lara-light-purple/theme.css';
+import { deserialize } from 'seroval';
 
 dayjs.extend(utc);
 
 export default function App({ Component, pageProps: props }: AppProps) {
     const { storeProps, pageProps } = props;
+    const deserializedPageProps = deserialize<object>(pageProps);
 
     useLayoutEffect(() => {
         if (!storeProps) return;
@@ -25,7 +27,7 @@ export default function App({ Component, pageProps: props }: AppProps) {
     return (
         <PrimeReactProvider>
             <Layout isAuthorized={storeProps?.adminSessionStore?.id}>
-                <Component {...pageProps} />
+                <Component {...deserializedPageProps} />
             </Layout>
         </PrimeReactProvider>
     );

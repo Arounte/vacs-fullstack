@@ -3,10 +3,14 @@ import { getIronSession, type IronSession } from 'iron-session';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { type Role, type Session, SESSION_OPTIONS } from '.';
+import { type UserRepository, userRepository } from '../user/repository';
 import { type SessionRepository, sessionRepository } from './repository';
 
 export class SessionService {
-    constructor(private readonly sessionRepository: SessionRepository) {}
+    constructor(
+        private readonly sessionRepository: SessionRepository,
+        private readonly userRepository: UserRepository,
+    ) {}
 
     private async session(
         req: IncomingMessage,
@@ -29,6 +33,7 @@ export class SessionService {
             throw Error('session_expired');
         }
 
+        const { username: newUsername, role: newRole } = await this.userRepository.findById(id);
         const { ip, ua } = this.getMeta(req);
 
         await this.sessionRepository.update({
@@ -37,6 +42,13 @@ export class SessionService {
             ipAddress: ip,
             userAgent: ua,
         });
+
+        if (username !== newUsername || role !== newRole) {
+            session.username = newUsername;
+            session.role = newRole as Role;
+
+            await session.save();
+        }
 
         return session;
     }
@@ -119,4 +131,4 @@ export class SessionService {
     }
 }
 
-export const sessionService = new SessionService(sessionRepository);
+export const sessionService = new SessionService(sessionRepository, userRepository);

@@ -34,3 +34,9 @@ export enum Role {
     Operator = 'operator',
     Guest = 'guest',
 }
+
+export const MAP_ROLE_TO_TITLE: Record<Role, string> = {
+    [Role.Admin]: 'Администратор',
+    [Role.Operator]: 'Оператор',
+    [Role.Guest]: 'Гость',
+};
