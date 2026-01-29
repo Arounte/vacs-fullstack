@@ -1,4 +1,3 @@
-import { useAdminSessionStore } from '@/data/session/store';
 import { Role } from '@/domain/session';
 import { withAuth } from '@/framework/middleware/auth';
 import { withServerSidePageController } from '@/framework/page-controller';
@@ -7,7 +6,6 @@ export const getServerSideProps = withServerSidePageController(undefined, [
     withAuth([Role.Admin, Role.Operator]),
 ]);
 
-export default function Home() {
-    const name = useAdminSessionStore((state) => state.username);
-    return <h1>Hello, {name}!</h1>;
+export default function Logs() {
+    return <p>logs</p>;
 }

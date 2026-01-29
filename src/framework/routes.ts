@@ -1,0 +1,9 @@
+export const HOME = '/';
+export const VEHICLES = '/vehicles';
+export const PASSES = '/passes';
+export const ACCESS = '/access';
+export const LOGS = '/logs';
+export const USERS = '/users';
+export const SETTINGS = '/settings';
+export const LOGIN = '/login';
+export const LOGOUT = '/logout';
