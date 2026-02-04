@@ -6,36 +6,39 @@ import type {
 } from 'next';
 import { serialize } from 'seroval';
 
+export type StoreHydrationMap = Record<string, unknown>;
+
 type ControllerResult<StoreProps, PageProps> =
     | { storeProps?: StoreProps; pageProps?: PageProps }
     | { redirect: Redirect }
     | { notFound: true };
 
-export type Middleware<StoreProps, PageProps> = (
+export type Middleware<StoreMap extends StoreHydrationMap, PageProps> = (
     context: GetServerSidePropsContext,
-) => Promise<ControllerResult<StoreProps, PageProps>>;
+) => Promise<ControllerResult<Partial<StoreMap>, PageProps>>;
+
 
 export function withServerSidePageController<
-    StoreProps extends object = object,
+    StoreMap extends StoreHydrationMap,
     PageProps extends object = object,
 >(
     handler?: (
         context: GetServerSidePropsContext,
         accumulatedData: {
-            storeProps: Partial<StoreProps>;
+            storeProps: Partial<StoreMap>;
             pageProps: Partial<PageProps>;
         },
-    ) => Promise<ControllerResult<StoreProps, PageProps> | object>,
-    middlewares?: Middleware<StoreProps, PageProps>[],
-): GetServerSideProps<{ storeProps: StoreProps; pageProps: PageProps }> {
+    ) => Promise<ControllerResult<Partial<StoreMap>, PageProps> | object>,
+    middlewares?: Middleware<StoreMap, PageProps>[],
+): GetServerSideProps<{ storeProps: StoreMap; pageProps: PageProps }> {
     return async function getServerSideProps(context: GetServerSidePropsContext): Promise<
         GetServerSidePropsResult<{
-            storeProps: StoreProps;
+            storeProps: StoreMap;
             pageProps: PageProps;
         }>
     > {
         const accumulatedData: {
-            storeProps: Partial<StoreProps>;
+            storeProps: Partial<StoreMap>;
             pageProps: Partial<PageProps>;
         } = {
             storeProps: {},
@@ -71,7 +74,7 @@ export function withServerSidePageController<
         }
 
         const result = (await handler?.(context, accumulatedData)) as ControllerResult<
-            StoreProps,
+            Partial<StoreMap>,
             PageProps
         >;
 
@@ -99,7 +102,7 @@ export function withServerSidePageController<
 
         return {
             props: {
-                storeProps: accumulatedData.storeProps as StoreProps,
+                storeProps: serialize(accumulatedData.storeProps) as unknown as StoreMap,
                 pageProps: serialize(accumulatedData.pageProps) as unknown as PageProps,
             },
         };

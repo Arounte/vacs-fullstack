@@ -1,8 +1,6 @@
 import type { StoreApi, UseBoundStore } from "zustand";
 
-type GenericStore = UseBoundStore<
-    StoreApi<object & { hydrate?: (data: unknown) => void }>
->;
+type GenericStore = UseBoundStore<StoreApi<{ hydrate: (data: unknown) => void }>>;
 
 export interface HydrationState {
     [store: string]: unknown;
@@ -16,11 +14,8 @@ export function register(name: string, store: unknown) {
 
 export function hydrate(initialState: HydrationState) {
     Object.entries(initialState).forEach(([name, state]) => {
-        const store = registry.get(name);
-        const newState = (store as GenericStore).getState();
+        const store = registry.get(name) as GenericStore | undefined;
 
-        if (newState.hydrate) {
-            newState.hydrate(state);
-        }
+        store?.getState().hydrate(state);
     });
 }

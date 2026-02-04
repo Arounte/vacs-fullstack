@@ -19,6 +19,11 @@ export const useModalStore = create<ModalStore>((set, get) => ({
     getProps: <K extends ModalType>(type: K): ModalPayload[K] | undefined => {
         const { modal } = get();
         if (modal.type !== type) return undefined;
-        return 'props' in modal ? modal.props : undefined;
+
+        if (!('props' in modal)) {
+            return undefined as ModalPayload[K] | undefined;
+        }
+
+        return modal.props as ModalPayload[K];
     },
 }));
