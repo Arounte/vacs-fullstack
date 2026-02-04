@@ -2,7 +2,7 @@ import type { AdminSession, AdminUser } from '@/framework/db/schema';
 import { getIronSession, type IronSession } from 'iron-session';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { type Role, type Session, SESSION_OPTIONS } from '.';
+import { Role, type Session, SESSION_OPTIONS } from '.';
 import { type UserRepository, userRepository } from '../user/repository';
 import { type SessionRepository, sessionRepository } from './repository';
 
@@ -97,7 +97,7 @@ export class SessionService {
     ) {
         const session = await this.session(req, res);
         const existing = await this.sessionRepository.findById(sid);
-        if (!existing || existing.userId !== session.id) {
+        if (!existing || (existing.userId !== session.id && session.role !== Role.Admin)) {
             throw new Error('forbidden');
         }
 
@@ -110,7 +110,7 @@ export class SessionService {
         userId: string,
     ): Promise<AdminSession[]> {
         const session = await this.session(req, res);
-        if (session.id !== userId) {
+        if (session.id !== userId && session.role !== Role.Admin) {
             throw new Error('forbidden');
         }
 

@@ -39,15 +39,10 @@ export const AdminLogin: FC = () => {
     return (
         <>
             <div className="h-full flex items-center justify-center">
-                <Card className="w-1/4" title="Авторизация">
-                    <form className="gap-6 flex flex-col" onSubmit={handleSubmit(submit)}>
-                        <Input name="username" control={control} placeholder="Имя пользователя" />
-                        <Input
-                            name="password"
-                            control={control}
-                            type="password"
-                            placeholder="Пароль"
-                        />
+                <Card className="w-1/3" title="Авторизация">
+                    <form className="gap-10 mt-2 flex flex-col" onSubmit={handleSubmit(submit)}>
+                        <Input name="username" control={control} label="Имя пользователя" />
+                        <Input name="password" control={control} type="password" label="Пароль" />
                         <Button
                             type="submit"
                             className="self-end"

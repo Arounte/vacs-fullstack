@@ -1,5 +1,6 @@
 export type ModalPayload = {
     session: { id: string; sid: string };
+    user: { id?: string };
 };
 
 export type ModalType = keyof ModalPayload;

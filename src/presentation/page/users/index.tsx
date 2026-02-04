@@ -1,65 +1,64 @@
-import { MAP_ROLE_TO_TITLE, type Role } from '@/domain/session';
+import { useModalStore } from '@/data/modal';
+import { useUserStore } from '@/data/user/store';
 import type { AdminUser } from '@/framework/db/schema';
-import dayjs from 'dayjs';
+import { useToast } from '@/presentation/context/toast';
+import { useAPI } from '@/presentation/hooks/useAPI';
 import { Button } from 'primereact/button';
-import { Column, type ColumnProps } from 'primereact/column';
+import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { InputSwitch } from 'primereact/inputswitch';
-import type { FC } from 'react';
+import { useCallback } from 'react';
+import { COLUMNS } from './content';
 
-type PropsT = {
-    users: AdminUser[];
-};
+export const Users = () => {
+    const { users, setUsers } = useUserStore();
+    const { open } = useModalStore();
+    const { get, patch } = useAPI();
+    const { showError } = useToast();
 
-const COLUMNS: ColumnProps[] = [
-    {
-        field: 'username',
-        header: 'Имя пользователя',
-    },
-    {
-        field: 'email',
-        header: 'E-mail',
-    },
-    {
-        field: 'role',
-        header: 'Роль',
-        body: ({ role }: AdminUser) => MAP_ROLE_TO_TITLE[role as Role],
-    },
-    {
-        field: 'isActive',
-        header: 'Статус',
-        body: ({ isActive }: AdminUser) => <InputSwitch checked={isActive} />,
-    },
-    {
-        field: 'lastLoginAt',
-        header: 'Последняя авторизация',
-        body: ({ lastLoginAt }: AdminUser) => dayjs(lastLoginAt).format('DD.MM.YYYY HH:mm:ss'),
-    },
-    {
-        field: 'createdAt',
-        header: 'Дата создания',
-        body: ({ createdAt }: AdminUser) => dayjs(createdAt).format('DD.MM.YYYY HH:mm:ss'),
-    },
-    {
-        field: 'updatedAt',
-        header: 'Дата изменения',
-        body: ({ updatedAt }: AdminUser) => dayjs(updatedAt).format('DD.MM.YYYY HH:mm:ss'),
-    },
-];
+    const fetchUsers = useCallback(async () => {
+        const { data } = await get<AdminUser[]>('/users');
+        if (data) {
+            setUsers(data);
+        }
+    }, [get, setUsers]);
 
-export const Users: FC<PropsT> = (props) => {
-    const { users } = props;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: .
+    const setIsActive = useCallback(
+        async (id: string, state: boolean) => {
+            const { status, reason } = await patch(`/users/${id}`, {
+                isActive: state,
+            });
+            if (!status && reason) {
+                return showError(reason);
+            }
+
+            fetchUsers();
+        },
+        [patch, fetchUsers],
+    );
 
     return (
         <div className="flex flex-col gap-6 h-full">
             <div className="flex items-center justify-between">
                 <h1 className="text-xl font-bold">Список пользователей</h1>
-                <Button label="Создать" icon="pi pi-plus" />
+                <Button label="Создать" icon="pi pi-plus" onClick={() => open('user', {})} />
             </div>
             <DataTable value={users}>
-                {COLUMNS.map((col) => (
+                {COLUMNS(setIsActive).map((col) => (
                     <Column key={col.field} {...col} />
                 ))}
+                <Column
+                    field="id"
+                    header="Действие"
+                    body={({ id }: AdminUser) => (
+                        <Button
+                            severity="secondary"
+                            text
+                            icon="pi pi-pencil"
+                            onClick={() => open('user', { id })}
+                        />
+                    )}
+                />
             </DataTable>
         </div>
     );

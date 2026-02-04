@@ -1,4 +1,4 @@
-import { getStringValidationSchema } from '@/helper/validation/string';
+import { getStringValidationSchema } from '@/helper/validation/rules';
 import * as v from 'valibot';
 
 export interface AuthForm {

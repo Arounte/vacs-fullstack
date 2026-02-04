@@ -1,26 +1,42 @@
 import type { AdminUser } from '@/framework/db/schema';
-import type { IncomingMessage, ServerResponse } from 'node:http';
-import { Role } from '../session';
-import { type SessionService, sessionService } from '../session/service';
+import argon2 from 'argon2';
+import * as v from 'valibot';
+import { CreateUserSchema, UpdateUserSchema } from '.';
 import { type UserRepository, userRepository } from './repository';
+import ApiError from '@/framework/backend/apiError';
 
 export class UserService {
-    constructor(
-        private readonly userRepository: UserRepository,
-        private readonly sessionService: SessionService,
-    ) {}
+    constructor(private readonly userRepository: UserRepository) {}
 
-    async getAllUsers(
-        req: IncomingMessage,
-        res: ServerResponse<IncomingMessage>,
-    ): Promise<AdminUser[]> {
-        const { role } = await this.sessionService.getSession(req, res);
-        if (role !== Role.Admin) {
-            throw new Error('forbidden');
-        }
-
+    async getAllUsers(): Promise<AdminUser[]> {
         return this.userRepository.findAll();
+    }
+
+    async getById(id?: string | string[]): Promise<AdminUser> {
+        if (!id) throw new ApiError('empty_id');
+
+        return this.userRepository.findById(Array.isArray(id) ? id[0] : id);
+    }
+
+    async create(data: unknown) {
+        const result = v.parse(CreateUserSchema, data);
+        const hash = await argon2.hash(result.password);
+
+        return this.userRepository.create({
+            ...result,
+            password: hash,
+        });
+    }
+
+    async update(data: unknown) {
+        const result = v.parse(UpdateUserSchema, data);
+        const hash = result.password ? await argon2.hash(result.password) : undefined;
+
+        return this.userRepository.update({
+            ...result,
+            password: hash,
+        });
     }
 }
 
-export const userService = new UserService(userRepository, sessionService);
+export const userService = new UserService(userRepository);

@@ -1,18 +1,19 @@
 import { Role } from '@/domain/session';
 import { userService } from '@/domain/user/service';
-import type { AdminUser } from '@/framework/db/schema';
 import { withAuth } from '@/framework/middleware/auth';
 import { withServerSidePageController } from '@/framework/page-controller';
 import { Users as UsersPage } from '@/presentation/page/users';
 
 export const getServerSideProps = withServerSidePageController(
-    async ({ req, res }, _) => {
+    async () => {
         try {
-            const users = await userService.getAllUsers(req, res);
+            const users = await userService.getAllUsers();
 
             return {
-                pageProps: {
-                    users,
+                storeProps: {
+                    userStore: {
+                        users,
+                    },
                 },
             };
         } catch {
@@ -22,6 +23,6 @@ export const getServerSideProps = withServerSidePageController(
     [withAuth([Role.Admin])],
 );
 
-export default function Users(props: { users: AdminUser[] }) {
-    return <UsersPage {...props} />;
+export default function Users() {
+    return <UsersPage />;
 }

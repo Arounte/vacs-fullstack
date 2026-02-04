@@ -1,5 +1,6 @@
 import { useModalStore } from '@/data/modal';
 import { useAdminSessionStore } from '@/data/session/store';
+import { Role } from '@/domain/session';
 import { ACCESS, HOME, LOGOUT, LOGS, PASSES, SETTINGS, USERS, VEHICLES } from '@/framework/routes';
 import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
@@ -13,7 +14,7 @@ type PropsT = {
     isAuthorized: boolean;
 };
 
-const ITEMS = (push: (url: string) => Promise<boolean>): MenuItem[] => [
+const ITEMS = (role: Role, push: (url: string) => Promise<boolean>): MenuItem[] => [
     {
         label: 'Главная',
         icon: 'pi pi-table',
@@ -34,16 +35,20 @@ const ITEMS = (push: (url: string) => Promise<boolean>): MenuItem[] => [
         icon: 'pi pi-ticket',
         command: () => push(PASSES),
     },
-    {
-        label: 'Журнал событий',
-        icon: 'pi pi-list-check',
-        command: () => push(LOGS),
-    },
-    {
-        label: 'Пользователи',
-        icon: 'pi pi-user',
-        command: () => push(USERS),
-    },
+    ...(role === Role.Admin
+        ? [
+              {
+                  label: 'Журнал событий',
+                  icon: 'pi pi-list-check',
+                  command: () => push(LOGS),
+              },
+              {
+                  label: 'Пользователи',
+                  icon: 'pi pi-user',
+                  command: () => push(USERS),
+              },
+          ]
+        : []),
     {
         label: 'Настройки',
         icon: 'pi pi-wrench',
@@ -67,7 +72,7 @@ const USER_MENU_ITEMS = (logout: () => void, open: () => void): MenuItem[] => [
 export function Layout(props: PropsWithChildren<PropsT>) {
     const { isAuthorized, children } = props;
     const menu = useRef<Menu>(null);
-    const { username: name, id, sid } = useAdminSessionStore();
+    const { username: name, id, sid, role } = useAdminSessionStore();
     const { push } = useRouter();
     const { open } = useModalStore();
 
@@ -98,7 +103,7 @@ export function Layout(props: PropsWithChildren<PropsT>) {
 
     return (
         <>
-            {isAuthorized && <Menubar model={ITEMS(push)} end={renderEnd} />}
+            {isAuthorized && <Menubar model={ITEMS(role, push)} end={renderEnd} />}
             <div className="flex-1 px-7 py-4">{children}</div>
             <ModalRoot />
         </>
