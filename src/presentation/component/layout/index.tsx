@@ -1,7 +1,17 @@
 import { useModalStore } from '@/data/modal';
 import { useAdminSessionStore } from '@/data/session/store';
 import { Role } from '@/domain/session';
-import { ACCESS, HOME, LOGOUT, LOGS, PASSES, SETTINGS, USERS, VEHICLES } from '@/framework/routes';
+import {
+    ACCESS,
+    CHECKPOINTS,
+    HOME,
+    LOGOUT,
+    LOGS,
+    PASSES,
+    SETTINGS,
+    USERS,
+    VEHICLES,
+} from '@/framework/routes';
 import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
@@ -31,29 +41,34 @@ const ITEMS = (role: Role, push: (url: string) => Promise<boolean>): MenuItem[] 
         command: () => push(VEHICLES),
     },
     {
+        label: 'КПП',
+        icon: 'pi pi-flag',
+        command: () => push(CHECKPOINTS),
+    },
+    {
         label: 'Пропуска',
         icon: 'pi pi-ticket',
         command: () => push(PASSES),
     },
+    {
+        label: 'Журнал событий',
+        icon: 'pi pi-list-check',
+        command: () => push(LOGS),
+    },
     ...(role === Role.Admin
         ? [
-              {
-                  label: 'Журнал событий',
-                  icon: 'pi pi-list-check',
-                  command: () => push(LOGS),
-              },
               {
                   label: 'Пользователи',
                   icon: 'pi pi-user',
                   command: () => push(USERS),
               },
+              {
+                  label: 'Настройки',
+                  icon: 'pi pi-wrench',
+                  command: () => push(SETTINGS),
+              },
           ]
         : []),
-    {
-        label: 'Настройки',
-        icon: 'pi pi-wrench',
-        command: () => push(SETTINGS),
-    },
 ];
 
 const USER_MENU_ITEMS = (logout: () => void, open: () => void): MenuItem[] => [

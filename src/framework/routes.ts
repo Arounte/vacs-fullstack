@@ -7,3 +7,4 @@ export const USERS = '/users';
 export const SETTINGS = '/settings';
 export const LOGIN = '/login';
 export const LOGOUT = '/logout';
+export const CHECKPOINTS = '/checkpoints';
