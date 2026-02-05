@@ -1,17 +1,17 @@
+import type { Session } from '@/domain/session';
 import { hydrate } from '@/framework/hydration';
 import '@/framework/register';
+import '@/globals.css';
 import { Layout } from '@/presentation/component/layout';
+import { ToastProvider } from '@/presentation/context/toast';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import type { AppProps } from 'next/app';
-import { PrimeReactProvider } from 'primereact/api';
-import { useLayoutEffect } from 'react';
-
-import type { Session } from '@/domain/session';
-import '@/globals.css';
-import { ToastProvider } from '@/presentation/context/toast';
 import 'primeicons/primeicons.css';
+import { ru } from 'primelocale/js/ru.js';
+import { addLocale, locale, PrimeReactProvider } from 'primereact/api';
 import 'primereact/resources/themes/lara-light-purple/theme.css';
+import { useEffect, useLayoutEffect } from 'react';
 import { deserialize } from 'seroval';
 
 dayjs.extend(utc);
@@ -22,6 +22,11 @@ export default function App({ Component, pageProps: props }: AppProps) {
     const deserializedStoreProps = deserialize<{ adminSessionStore: Session } & unknown>(
         storeProps,
     );
+
+    useEffect(() => {
+        addLocale('ru', ru);
+        locale('ru');
+    }, []);
 
     useLayoutEffect(() => {
         if (!storeProps) return;
