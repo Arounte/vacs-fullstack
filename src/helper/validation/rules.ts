@@ -5,6 +5,15 @@ export function getStringValidationSchema() {
     return v.pipe(v.string(), v.trim(), v.minLength(1, 'Обязательно для заполнения'));
 }
 
+export function getPlateNumberValidationSchema() {
+    return v.pipe(
+        v.string(),
+        v.trim(),
+        v.minLength(1, 'Обязательно для заполнения'),
+        v.maxLength(10, 'Не более 10 символов'),
+    );
+}
+
 export function getNewPasswordValidationSchema() {
     return v.pipe(
         v.string('Пароль должен быть строкой'),

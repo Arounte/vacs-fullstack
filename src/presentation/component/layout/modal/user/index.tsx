@@ -73,7 +73,6 @@ export default function UserModal() {
     };
 
     const onSubmit = async (data: UserFormData) => {
-        // if (isCreate) {
         const { status, reason } = isCreate
             ? await post(`/users`, data)
             : await patch(`/users/${id}`, data);
