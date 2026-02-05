@@ -204,4 +204,5 @@ export type AdminSession = typeof adminSession.$inferSelect;
 export type Vehicle = typeof vehicles.$inferSelect;
 export type Checkpoint = typeof checkpoints.$inferSelect;
 export type Pass = typeof passes.$inferSelect;
+export type PassCreate = typeof passes.$inferInsert;
 export type AccessEvent = typeof accessEvents.$inferSelect;

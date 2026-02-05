@@ -3,6 +3,7 @@ export type ModalPayload = {
     user: { id?: string };
     vehicle: { id?: string };
     checkpoint: { id?: string };
+    pass: { id?: string };
 };
 
 export type ModalType = keyof ModalPayload;
