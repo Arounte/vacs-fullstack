@@ -15,7 +15,7 @@ export class CheckpointService {
         if (!id) throw new ApiError('empty_id');
 
         const existing = this.checkpointRepository.findById(Array.isArray(id) ? id[0] : id);
-        if (!existing) throw new Error('checkpoint_not_found');
+        if (!existing) throw new ApiError('checkpoint_not_found');
 
         return existing;
     }
@@ -36,7 +36,7 @@ export class CheckpointService {
         if (!id) throw new ApiError('empty_id');
 
         const existing = this.checkpointRepository.delete(Array.isArray(id) ? id[0] : id);
-        if (!existing) throw new Error('checkpoint_not_found');
+        if (!existing) throw new ApiError('checkpoint_not_found');
 
         return existing;
     }

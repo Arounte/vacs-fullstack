@@ -15,7 +15,7 @@ export class VehicleService {
         if (!id) throw new ApiError('empty_id');
 
         const existing = await this.vehicleRepository.findById(Array.isArray(id) ? id[0] : id);
-        if (!existing) throw new Error('vehicle_not_found');
+        if (!existing) throw new ApiError('vehicle_not_found');
 
         return existing;
     }
@@ -36,7 +36,7 @@ export class VehicleService {
         if (!id) throw new ApiError('empty_id');
 
         const existing = this.vehicleRepository.delete(Array.isArray(id) ? id[0] : id);
-        if (!existing) throw new Error('vehicle_not_found');
+        if (!existing) throw new ApiError('vehicle_not_found');
 
         return existing;
     }
