@@ -15,4 +15,9 @@ export default createRouter({
 
         return res.status(200).json({ status: true, data: result });
     },
+    DELETE: async (req, res) => {
+        const result = await vehicleService.delete(req.query.vehicleId);
+
+        return res.status(200).json({ status: true, data: result });
+    },
 });

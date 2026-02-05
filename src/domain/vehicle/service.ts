@@ -31,6 +31,15 @@ export class VehicleService {
 
         return this.vehicleRepository.update(result);
     }
+
+    async delete(id?: string | string[]) {
+        if (!id) throw new ApiError('empty_id');
+
+        const existing = this.vehicleRepository.delete(Array.isArray(id) ? id[0] : id);
+        if (!existing) throw new Error('vehicle_not_found');
+
+        return existing;
+    }
 }
 
 export const vehicleService = new VehicleService(vehicleRepository);

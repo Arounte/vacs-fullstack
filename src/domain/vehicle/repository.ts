@@ -23,6 +23,10 @@ export class VehicleRepository {
     async update({ id, ...data }: UpdateVehicleData): Promise<Vehicle | undefined> {
         return (await db.update(vehicles).set(data).where(eq(vehicles.id, id)).returning())[0];
     }
+
+    async delete(id: string) {
+        return (await db.delete(vehicles).where(eq(vehicles.id, id)).returning())[0];
+    }
 }
 
 export const vehicleRepository = new VehicleRepository();

@@ -27,7 +27,7 @@ export default function VehicleModal() {
         resolver: valibotResolver(CreateVehicleSchema),
     });
     const { isValid } = useFormState({ control });
-    const { get, post, patch, isPending } = useAPI();
+    const { get, post, patch, del, isPending } = useAPI();
     const { showError } = useToast();
     const plateNumber = watch('plateNumber');
 
@@ -74,6 +74,17 @@ export default function VehicleModal() {
         if (reason) showError(reason);
     };
 
+    const onDelete = async (id: string) => {
+        const { status, reason } = await del(`/vehicles/${id}`);
+        if (!status && reason) return showError(reason);
+
+        if (status) {
+            fetchVehicles();
+
+            return requestClose();
+        }
+    };
+
     return (
         <Modal
             className="w-1/2"
@@ -109,12 +120,26 @@ export default function VehicleModal() {
                     initializing={initializing}
                     autoComplete="off"
                 />
-                <Button
-                    loading={isPending}
-                    type="submit"
-                    label="Сохранить"
-                    disabled={!isValid || initializing}
-                />
+                <div className="grid gap-4 grid-flow-col">
+                    {!isCreate && (
+                        <Button
+                            type="button"
+                            loading={isPending}
+                            severity="danger"
+                            label="Удалить"
+                            icon="pi pi-trash"
+                            disabled={initializing}
+                            onClick={() => onDelete(id)}
+                        />
+                    )}
+                    <Button
+                        loading={isPending}
+                        type="submit"
+                        label="Сохранить"
+                        icon="pi pi-check-circle"
+                        disabled={!isValid || initializing}
+                    />
+                </div>
             </form>
         </Modal>
     );
