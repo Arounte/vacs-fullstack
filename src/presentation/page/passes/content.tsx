@@ -4,6 +4,7 @@ import type { ColumnProps } from 'primereact/column';
 import { InputSwitch } from 'primereact/inputswitch';
 
 export const COLUMNS = (
+    isAdmin: boolean,
     setIsActive: (id: string, state: boolean) => Promise<void>,
     getCheckpointName: (id: string) => string | undefined,
     getPlateNumber: (id: string) => string | undefined,
@@ -32,7 +33,11 @@ export const COLUMNS = (
         field: 'isActive',
         header: 'Статус',
         body: ({ id, isActive }: Pass) => (
-            <InputSwitch checked={isActive} onChange={(e) => setIsActive(id, e.value)} />
+            <InputSwitch
+                disabled={!isAdmin}
+                checked={isActive}
+                onChange={(e) => setIsActive(id, e.value)}
+            />
         ),
     },
     {

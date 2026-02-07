@@ -1,7 +1,9 @@
 import { useCheckpointStore } from '@/data/checkpoint/store';
 import { useModalStore } from '@/data/modal';
 import { usePassStore } from '@/data/pass';
+import { useAdminSessionStore } from '@/data/session/store';
 import { useVehicleStore } from '@/data/vehicle/store';
+import { Role } from '@/domain/session';
 import type { Pass } from '@/framework/db/schema';
 import { useToast } from '@/presentation/context/toast';
 import { useAPI } from '@/presentation/hooks/useAPI';
@@ -18,6 +20,8 @@ export const Passes = () => {
     const { open } = useModalStore();
     const { get, patch } = useAPI();
     const { showError } = useToast();
+    const { role } = useAdminSessionStore();
+    const isAdmin = role === Role.Admin;
 
     const getPlateNumberById = useCallback(
         (id: string) => {
@@ -59,24 +63,30 @@ export const Passes = () => {
         <div className="flex flex-col gap-6 h-full">
             <div className="flex items-center justify-between">
                 <h1 className="text-xl font-bold">Список пропусков</h1>
-                <Button label="Создать" icon="pi pi-plus" onClick={() => open('pass', {})} />
+                {isAdmin && (
+                    <Button label="Создать" icon="pi pi-plus" onClick={() => open('pass', {})} />
+                )}
             </div>
             <DataTable value={passes}>
-                {COLUMNS(setIsActive, getCheckpointNameById, getPlateNumberById).map((col) => (
-                    <Column key={col.field} {...col} />
-                ))}
-                <Column
-                    field="id"
-                    header="Действие"
-                    body={({ id }: Pass) => (
-                        <Button
-                            severity="secondary"
-                            text
-                            icon="pi pi-pencil"
-                            onClick={() => open('pass', { id })}
-                        />
-                    )}
-                />
+                {COLUMNS(isAdmin, setIsActive, getCheckpointNameById, getPlateNumberById).map(
+                    (col) => (
+                        <Column key={col.field} {...col} />
+                    ),
+                )}
+                {isAdmin && (
+                    <Column
+                        field="id"
+                        header="Действие"
+                        body={({ id }: Pass) => (
+                            <Button
+                                severity="secondary"
+                                text
+                                icon="pi pi-pencil"
+                                onClick={() => open('pass', { id })}
+                            />
+                        )}
+                    />
+                )}
             </DataTable>
         </div>
     );
