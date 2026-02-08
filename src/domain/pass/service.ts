@@ -1,8 +1,6 @@
 import ApiError from '@/framework/backend/apiError';
-import { db } from '@/framework/db/init';
-import { type Pass, passes } from '@/framework/db/schema';
+import type { Pass } from '@/framework/db/schema';
 import dayjs from 'dayjs';
-import { and, eq, gte, lte } from 'drizzle-orm';
 import * as v from 'valibot';
 import { CreatePassSchema, UpdatePassSchema } from '.';
 import { type PassRepository, passRepository } from './repository';
@@ -24,38 +22,19 @@ export class PassService {
     }
 
     async getValid(checkpointId: string, vehicleId: string, now: Date): Promise<Pass | undefined> {
-        const existing = (
-            await db
-                .select()
-                .from(passes)
-                .where(
-                    and(
-                        eq(passes.checkpointId, checkpointId),
-                        eq(passes.isActive, true),
-                        eq(passes.vehicleId, vehicleId),
-                        lte(passes.validFrom, now),
-                        gte(passes.validTo, now),
-                    ),
-                )
-        )[0];
+        const existing = await this.passRepository.findValid(checkpointId, vehicleId, now);
 
         return existing;
     }
 
     async create(data: unknown): Promise<Pass | undefined> {
         const result = v.parse(CreatePassSchema, data);
-        const [isOverlappingPassExists] = await db
-            .select()
-            .from(passes)
-            .where(
-                and(
-                    eq(passes.vehicleId, result.vehicleId),
-                    eq(passes.checkpointId, result.checkpointId),
-                    eq(passes.isActive, true),
-                    lte(passes.validFrom, new Date(result.validTo)),
-                    gte(passes.validTo, new Date(result.validFrom)),
-                ),
-            );
+        const isOverlappingPassExists = await this.passRepository.hasOverlap(
+            result.vehicleId,
+            result.checkpointId,
+            new Date(result.validFrom),
+            new Date(result.validTo),
+        );
         if (isOverlappingPassExists) {
             throw new ApiError('overlapping_pass_exists');
         }
