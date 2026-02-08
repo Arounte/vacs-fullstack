@@ -1,8 +1,12 @@
 import type { Role } from '@/domain/session';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// biome-ignore lint/suspicious/noExplicitAny: .
-export type Handler = (req: NextApiRequest, res: NextApiResponse) => Promise<any>;
+export type Handler = (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    user?: { id: string; username: string },
+    // biome-ignore lint/suspicious/noExplicitAny: .
+) => Promise<any>;
 
 export type RouteHandler = Handler | { handler: Handler; roles?: Role[] };
 

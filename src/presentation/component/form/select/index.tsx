@@ -1,18 +1,15 @@
-import clsx from 'clsx';
-import { Dropdown, type DropdownProps } from 'primereact/dropdown';
-import { FloatLabel } from 'primereact/floatlabel';
 import { Skeleton } from 'primereact/skeleton';
 import { type Control, Controller, type FieldValues, type Path } from 'react-hook-form';
+import { Select as BaseSelect, type SelectPropsT } from '../../common/select';
 
-type PropsT<T extends FieldValues> = Omit<DropdownProps, 'name'> & {
-    label?: string;
+type PropsT<T extends FieldValues> = Omit<SelectPropsT, 'name'> & {
     name: Path<T>;
     control: Control<T>;
     initializing?: boolean;
 };
 
 export function Select<T extends FieldValues>(props: PropsT<T>) {
-    const { name, control, label, options, className, initializing = false, ...restProps } = props;
+    const { name, control, initializing = false, ...restProps } = props;
 
     return (
         <Controller
@@ -23,21 +20,14 @@ export function Select<T extends FieldValues>(props: PropsT<T>) {
                     <Skeleton width="full" height="2rem" />
                 ) : (
                     <div className="flex flex-col">
-                        <FloatLabel>
-                            <Dropdown
-                                {...field}
-                                {...restProps}
-                                className={clsx('w-full', className)}
-                                id={`__${name}`}
-                                value={field.value}
-                                onChange={(e) => field.onChange(e.value)}
-                                invalid={invalid}
-                                options={options}
-                                editable
-                                showClear
-                            />
-                            {label && <label htmlFor={`__${name}`}>{label}</label>}
-                        </FloatLabel>
+                        <BaseSelect
+                            {...field}
+                            {...restProps}
+                            name={name}
+                            value={field.value}
+                            onChange={(e) => field.onChange(e.value)}
+                            invalid={invalid}
+                        />
                         {error && <small className="text-red-400">{error.message}</small>}
                     </div>
                 )

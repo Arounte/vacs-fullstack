@@ -67,27 +67,29 @@ export const Passes = () => {
                     <Button label="Создать" icon="pi pi-plus" onClick={() => open('pass', {})} />
                 )}
             </div>
-            <DataTable value={passes}>
-                {COLUMNS(isAdmin, setIsActive, getCheckpointNameById, getPlateNumberById).map(
-                    (col) => (
-                        <Column key={col.field} {...col} />
-                    ),
-                )}
-                {isAdmin && (
-                    <Column
-                        field="id"
-                        header="Действие"
-                        body={({ id }: Pass) => (
-                            <Button
-                                severity="secondary"
-                                text
-                                icon="pi pi-pencil"
-                                onClick={() => open('pass', { id })}
-                            />
-                        )}
-                    />
-                )}
-            </DataTable>
+            <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-white overflow-auto">
+                <DataTable value={passes}>
+                    {COLUMNS(isAdmin, setIsActive, getCheckpointNameById, getPlateNumberById).map(
+                        (col) => (
+                            <Column key={col.field} {...col} />
+                        ),
+                    )}
+                    {isAdmin && (
+                        <Column
+                            field="id"
+                            header="Действие"
+                            body={({ id }: Pass) => (
+                                <Button
+                                    severity="secondary"
+                                    text
+                                    icon="pi pi-pencil"
+                                    onClick={() => open('pass', { id })}
+                                />
+                            )}
+                        />
+                    )}
+                </DataTable>
+            </div>
         </div>
     );
 };

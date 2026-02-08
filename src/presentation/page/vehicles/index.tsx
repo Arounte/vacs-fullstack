@@ -22,25 +22,27 @@ export const Vehicles = () => {
                     <Button label="Создать" icon="pi pi-plus" onClick={() => open('vehicle', {})} />
                 )}
             </div>
-            <DataTable value={vehicles}>
-                {COLUMNS.map((col) => (
-                    <Column key={col.field} {...col} />
-                ))}
-                {isAdmin && (
-                    <Column
-                        field="id"
-                        header="Действие"
-                        body={({ id }: Vehicle) => (
-                            <Button
-                                severity="secondary"
-                                text
-                                icon="pi pi-pencil"
-                                onClick={() => open('vehicle', { id })}
-                            />
-                        )}
-                    />
-                )}
-            </DataTable>
+            <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-white overflow-auto">
+                <DataTable value={vehicles} scrollable scrollHeight="flex">
+                    {COLUMNS.map((col) => (
+                        <Column key={col.field} {...col} />
+                    ))}
+                    {isAdmin && (
+                        <Column
+                            field="id"
+                            header="Действие"
+                            body={({ id }: Vehicle) => (
+                                <Button
+                                    severity="secondary"
+                                    text
+                                    icon="pi pi-pencil"
+                                    onClick={() => open('vehicle', { id })}
+                                />
+                            )}
+                        />
+                    )}
+                </DataTable>
+            </div>
         </div>
     );
 };

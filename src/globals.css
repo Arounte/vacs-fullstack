@@ -12,5 +12,5 @@ body {
 }
 
 #__next {
-    @apply flex flex-col min-h-dvh h-full;
+    @apply flex flex-col h-dvh max-h-dvh;
 }

@@ -1,11 +1,12 @@
 import type { Status } from '@/data';
 import { api } from '@/framework/api-client';
+import type { ReasonT } from '@/helper/reason';
 import type { AxiosError, AxiosRequestConfig } from 'axios';
 import { useCallback, useState } from 'react';
 
 export const useAPI = () => {
     const [isPending, setIsPending] = useState(false);
-    const [error, setError] = useState<string>();
+    const [error, setError] = useState<ReasonT>();
 
     const handleError = useCallback((err: unknown) => {
         const data = (err as AxiosError).response?.data;
@@ -55,7 +56,6 @@ export const useAPI = () => {
 
                 return data;
             } catch (err) {
-                console.log(err);
                 return handleError(err);
             } finally {
                 setIsPending(false);

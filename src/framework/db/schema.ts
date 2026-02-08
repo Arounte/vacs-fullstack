@@ -128,7 +128,7 @@ export const accessEvents = pgTable(
         plateNumber: varchar('plate_number', { length: 10 }).notNull(),
         vehicleModel: text('vehicle_model'),
         checkpointName: text('checkpoint_name').notNull(),
-        eventType: eventTypeEnum('event_type').notNull(),
+        eventType: eventTypeEnum('event_type'),
         timestamp: timestamp('timestamp', { withTimezone: true }).notNull().defaultNow(),
         result: resultTypeEnum('result').notNull(),
         reason: text('reason'),
@@ -206,3 +206,4 @@ export type Checkpoint = typeof checkpoints.$inferSelect;
 export type Pass = typeof passes.$inferSelect;
 export type PassCreate = typeof passes.$inferInsert;
 export type AccessEvent = typeof accessEvents.$inferSelect;
+export type AccessEventCreate = typeof accessEvents.$inferInsert;

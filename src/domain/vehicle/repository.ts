@@ -16,6 +16,12 @@ export class VehicleRepository {
         return existing;
     }
 
+    async findByPlateNumber(plateNumber: string): Promise<Vehicle | undefined> {
+        const [existing] = await db.select().from(vehicles).where(eq(vehicles.plateNumber, plateNumber));
+
+        return existing;
+    }
+
     async create(data: CreateVehicleData): Promise<Vehicle | undefined> {
         return (await db.insert(vehicles).values(data).returning())[0];
     }

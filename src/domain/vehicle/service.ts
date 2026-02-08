@@ -20,10 +20,19 @@ export class VehicleService {
         return existing;
     }
 
+    async getByPlateNumber(plateNumber: string): Promise<Vehicle | undefined> {
+        const existing = await this.vehicleRepository.findByPlateNumber(plateNumber);
+
+        return existing;
+    }
+
     async create(data: unknown) {
         const result = v.parse(CreateVehicleSchema, data);
 
-        return this.vehicleRepository.create(result);
+        return this.vehicleRepository.create({
+            ...result,
+            plateNumber: result.plateNumber.toUpperCase(),
+        });
     }
 
     async update(data: unknown) {

@@ -6,6 +6,7 @@ const UserModal = dynamic(() => import('./user'), { ssr: false });
 const VehicleModal = dynamic(() => import('./vehicle'), { ssr: false });
 const CheckpointModal = dynamic(() => import('./checkpoint'), { ssr: false });
 const PassModal = dynamic(() => import('./pass'), { ssr: false });
+const AccessModal = dynamic(() => import('./access'), { ssr: false });
 
 export const ModalRoot = () => {
     const { modal } = useModalStore();
@@ -17,6 +18,7 @@ export const ModalRoot = () => {
             {modal.type === 'vehicle' && <VehicleModal />}
             {modal.type === 'checkpoint' && <CheckpointModal />}
             {modal.type === 'pass' && <PassModal />}
+            {modal.type === 'access' && <AccessModal />}
         </>
     );
 };

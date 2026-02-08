@@ -43,23 +43,25 @@ export const Users = () => {
                 <h1 className="text-xl font-bold">Список пользователей</h1>
                 <Button label="Создать" icon="pi pi-plus" onClick={() => open('user', {})} />
             </div>
-            <DataTable value={users}>
-                {COLUMNS(setIsActive).map((col) => (
-                    <Column key={col.field} {...col} />
-                ))}
-                <Column
-                    field="id"
-                    header="Действие"
-                    body={({ id }: AdminUser) => (
-                        <Button
-                            severity="secondary"
-                            text
-                            icon="pi pi-pencil"
-                            onClick={() => open('user', { id })}
-                        />
-                    )}
-                />
-            </DataTable>
+            <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-white overflow-auto">
+                <DataTable value={users}>
+                    {COLUMNS(setIsActive).map((col) => (
+                        <Column key={col.field} {...col} />
+                    ))}
+                    <Column
+                        field="id"
+                        header="Действие"
+                        body={({ id }: AdminUser) => (
+                            <Button
+                                severity="secondary"
+                                text
+                                icon="pi pi-pencil"
+                                onClick={() => open('user', { id })}
+                            />
+                        )}
+                    />
+                </DataTable>
+            </div>
         </div>
     );
 };

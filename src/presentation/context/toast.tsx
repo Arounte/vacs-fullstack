@@ -1,3 +1,4 @@
+import { MAP_REASON_TO_MESSAGE, type ReasonT } from '@/helper/reason';
 import type { ToastMessage } from 'primereact/toast';
 import { Toast } from 'primereact/toast';
 import { createContext, type ReactNode, useContext, useRef } from 'react';
@@ -16,6 +17,12 @@ interface ToastProviderProps {
     children: ReactNode;
 }
 
+const PARSE_SUMMARY = (summary: string) => {
+    return Object.keys(MAP_REASON_TO_MESSAGE).includes(summary)
+        ? MAP_REASON_TO_MESSAGE[summary as ReasonT]
+        : summary;
+};
+
 export function ToastProvider({ children }: ToastProviderProps) {
     const toast = useRef<Toast>(null);
 
@@ -26,7 +33,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     const showSuccess = (summary: string, detail?: string) => {
         toast.current?.show({
             severity: 'success',
-            summary,
+            summary: PARSE_SUMMARY(summary),
             detail,
             life: 3000,
         });
@@ -35,7 +42,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     const showError = (summary: string, detail?: string) => {
         toast.current?.show({
             severity: 'error',
-            summary,
+            summary: PARSE_SUMMARY(summary),
             detail,
             life: 5000,
         });
@@ -44,7 +51,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     const showInfo = (summary: string, detail?: string) => {
         toast.current?.show({
             severity: 'info',
-            summary,
+            summary: PARSE_SUMMARY(summary),
             detail,
             life: 3000,
         });
@@ -53,7 +60,7 @@ export function ToastProvider({ children }: ToastProviderProps) {
     const showWarn = (summary: string, detail?: string) => {
         toast.current?.show({
             severity: 'warn',
-            summary,
+            summary: PARSE_SUMMARY(summary),
             detail,
             life: 4000,
         });

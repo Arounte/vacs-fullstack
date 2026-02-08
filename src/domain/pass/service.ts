@@ -23,6 +23,24 @@ export class PassService {
         return existing;
     }
 
+    async getValid(checkpointId: string, vehicleId: string, now: Date): Promise<Pass | undefined> {
+        const existing = (
+            await db
+                .select()
+                .from(passes)
+                .where(
+                    and(
+                        eq(passes.checkpointId, checkpointId),
+                        eq(passes.vehicleId, vehicleId),
+                        lte(passes.validFrom, now),
+                        gte(passes.validTo, now),
+                    ),
+                )
+        )[0];
+
+        return existing;
+    }
+
     async create(data: unknown): Promise<Pass | undefined> {
         const result = v.parse(CreatePassSchema, data);
         const [isOverlappingPassExists] = await db

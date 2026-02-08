@@ -1,17 +1,7 @@
 import { useModalStore } from '@/data/modal';
 import { useAdminSessionStore } from '@/data/session/store';
 import { Role } from '@/domain/session';
-import {
-    ACCESS,
-    CHECKPOINTS,
-    HOME,
-    LOGOUT,
-    LOGS,
-    PASSES,
-    SETTINGS,
-    USERS,
-    VEHICLES,
-} from '@/framework/routes';
+import { CHECKPOINTS, HOME, LOGOUT, LOGS, PASSES, USERS, VEHICLES } from '@/framework/routes';
 import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
@@ -26,14 +16,9 @@ type PropsT = {
 
 const ITEMS = (role: Role, push: (url: string) => Promise<boolean>): MenuItem[] => [
     {
-        label: 'Главная',
-        icon: 'pi pi-table',
-        command: () => push(HOME),
-    },
-    {
         label: 'Контроль доступа',
         icon: 'pi pi-lock-open',
-        command: () => push(ACCESS),
+        command: () => push(HOME),
     },
     {
         label: 'Транспортные средства',
@@ -61,11 +46,6 @@ const ITEMS = (role: Role, push: (url: string) => Promise<boolean>): MenuItem[] 
                   label: 'Пользователи',
                   icon: 'pi pi-user',
                   command: () => push(USERS),
-              },
-              {
-                  label: 'Настройки',
-                  icon: 'pi pi-wrench',
-                  command: () => push(SETTINGS),
               },
           ]
         : []),
@@ -119,7 +99,7 @@ export function Layout(props: PropsWithChildren<PropsT>) {
     return (
         <>
             {isAuthorized && <Menubar model={ITEMS(role, push)} end={renderEnd} />}
-            <div className="flex-1 px-7 py-4">{children}</div>
+            <div className="px-7 py-4 flex-1 min-h-0">{children}</div>
             <ModalRoot />
         </>
     );

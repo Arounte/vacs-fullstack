@@ -38,7 +38,7 @@ export const AdminLogin: FC = () => {
 
     return (
         <>
-            <div className="h-full flex items-center justify-center">
+            <div className="flex-1 min-h-0 flex items-center justify-center">
                 <Card className="w-1/3" title="Авторизация">
                     <form className="gap-10 mt-2 flex flex-col" onSubmit={handleSubmit(submit)}>
                         <Input name="username" control={control} label="Имя пользователя" />

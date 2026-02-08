@@ -1,13 +1,34 @@
-import { useAdminSessionStore } from '@/data/session/store';
+import { checkpointService } from '@/domain/checkpoint/service';
 import { Role } from '@/domain/session';
 import { withAuth } from '@/framework/middleware/auth';
 import { withServerSidePageController } from '@/framework/page-controller';
+import { Access as AccessPage } from '@/presentation/page/access';
 
-export const getServerSideProps = withServerSidePageController(undefined, [
+export const getServerSideProps = withServerSidePageController(async () => {
+    try {
+        const checkpoints = await checkpointService.getAllCheckpoints();
+
+        return {
+            storeProps: {
+                checkpointStore: {
+                    checkpoints,
+                },
+            },
+        };
+    } catch {
+        return {
+            storeProps: {
+                checkpointStore: {
+                    checkpoints: [],
+                },
+            },
+        };
+    }
+    
+}, [
     withAuth([Role.Admin, Role.Operator]),
 ]);
 
-export default function Home() {
-    const name = useAdminSessionStore((state) => state.username);
-    return <h1>Hello, {name}!</h1>;
+export default function Access() {
+    return <AccessPage />;
 }

@@ -4,6 +4,7 @@ export type ModalPayload = {
     vehicle: { id?: string };
     checkpoint: { id?: string };
     pass: { id?: string };
+    access: { plateNumber: string; checkpointId: string; isEmergency: boolean };
 };
 
 export type ModalType = keyof ModalPayload;

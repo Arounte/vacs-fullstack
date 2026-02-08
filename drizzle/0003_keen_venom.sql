@@ -1,0 +1,1 @@
+ALTER TABLE "access_events" ALTER COLUMN "event_type" DROP NOT NULL;
