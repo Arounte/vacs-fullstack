@@ -14,6 +14,7 @@ export const CreateUserSchema = v.object({
     username: getUsernameValidationSchema(),
     email: getEmailValidationSchema(),
     password: getNewPasswordValidationSchema(),
+    defaultCheckpointId: v.string(),
     role: v.pipe(v.picklist(AUTHORIZED_ROLES, 'Invalid role')),
 });
 
@@ -25,6 +26,7 @@ export const UpdateUserSchema = v.object({
     email: v.optional(getEmailValidationSchema()),
     password: v.optional(v.union([v.literal(''), getNewPasswordValidationSchema()])),
     role: v.optional(getRoleValidationSchema()),
+    defaultCheckpointId: v.nullish(v.string()),
     isActive: v.optional(v.boolean()),
     lastLoginAt: v.optional(v.date()),
 });

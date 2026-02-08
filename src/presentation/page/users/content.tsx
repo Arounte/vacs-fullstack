@@ -30,7 +30,8 @@ export const COLUMNS = (
     {
         field: 'lastLoginAt',
         header: 'Последняя авторизация',
-        body: ({ lastLoginAt }: AdminUser) => dayjs(lastLoginAt).format('DD.MM.YYYY HH:mm:ss'),
+        body: ({ lastLoginAt }: AdminUser) =>
+            lastLoginAt ? dayjs(lastLoginAt).format('DD.MM.YYYY HH:mm:ss') : '–',
     },
     {
         field: 'createdAt',

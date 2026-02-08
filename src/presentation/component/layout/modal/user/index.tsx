@@ -1,3 +1,4 @@
+import { useCheckpointStore } from '@/data/checkpoint/store';
 import { useModalStore } from '@/data/modal';
 import { useUserStore } from '@/data/user/store';
 import { Role } from '@/domain/session';
@@ -9,13 +10,14 @@ import { useToast } from '@/presentation/context/toast';
 import { useAPI } from '@/presentation/hooks/useAPI';
 import { valibotResolver } from '@hookform/resolvers/valibot';
 import { Button } from 'primereact/button';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm, useFormState } from 'react-hook-form';
 import { Modal } from '../common';
 import { getUserFormSchema, type UserFormData } from './types';
 
 export default function UserModal() {
     const { requestClose, getProps } = useModalStore();
+    const { checkpoints } = useCheckpointStore();
     const { setUsers } = useUserStore();
     const { id } = getProps('user') ?? {};
     const [initializing, setInitializing] = useState(true);
@@ -27,6 +29,7 @@ export default function UserModal() {
             email: '',
             role: Role.Operator,
             password: '',
+            defaultCheckpointId: '',
             isActive: true,
         },
         resolver: valibotResolver(schema),
@@ -35,6 +38,14 @@ export default function UserModal() {
     const { get, post, patch, isPending } = useAPI();
     const { showError } = useToast();
     const username = watch('username');
+    const checkpointOptions = useMemo(
+        () =>
+            checkpoints.map(({ id, name }) => ({
+                value: id,
+                label: name,
+            })),
+        [checkpoints],
+    );
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: .
     useEffect(() => {
@@ -51,6 +62,7 @@ export default function UserModal() {
                 email: data?.email,
                 role: data?.role as Role.Admin | Role.Operator | undefined,
                 isActive: data?.isActive,
+                defaultCheckpointId: data?.defaultCheckpointId ?? '',
             });
         }
 
@@ -74,8 +86,14 @@ export default function UserModal() {
 
     const onSubmit = async (data: UserFormData) => {
         const { status, reason } = isCreate
-            ? await post(`/users`, data)
-            : await patch(`/users/${id}`, data);
+            ? await post(`/users`, {
+                  ...data,
+                  defaultCheckpointId: data.defaultCheckpointId ?? null,
+              })
+            : await patch(`/users/${id}`, {
+                  ...data,
+                  defaultCheckpointId: data.defaultCheckpointId ?? null,
+              });
         if (status) {
             fetchUsers();
 
@@ -130,6 +148,13 @@ export default function UserModal() {
                             label: 'Оператор',
                         },
                     ]}
+                />
+                <Select
+                    name="defaultCheckpointId"
+                    control={control}
+                    label="Пропускной пункт"
+                    initializing={initializing}
+                    options={checkpointOptions}
                 />
                 {!isCreate && (
                     <Switch

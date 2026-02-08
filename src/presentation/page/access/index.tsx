@@ -1,6 +1,7 @@
 import { useAccessStore } from '@/data/access';
 import { useCheckpointStore } from '@/data/checkpoint/store';
 import { useModalStore } from '@/data/modal';
+import { useAdminSessionStore } from '@/data/session/store';
 import type { Checkpoint } from '@/framework/db/schema';
 import { Select } from '@/presentation/component/common/select';
 import { Clock } from '@/presentation/component/feature/clock';
@@ -11,7 +12,7 @@ import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { COLUMNS } from './content';
 import { type AccessFormData, AccessFormSchema } from './types';
@@ -20,6 +21,7 @@ export const Access = () => {
     const { checkpoints } = useCheckpointStore();
     const { open } = useModalStore();
     const { accessLogs } = useAccessStore();
+    const { checkpointId } = useAdminSessionStore();
     const [currentCheckpoint, setCurrentCheckpoint] = useState<Checkpoint | null>(null);
     const [selectedCheckpoint, setSelectedCheckpoint] = useState<Checkpoint['id']>('');
     const { control, handleSubmit } = useForm<AccessFormData>({
@@ -37,10 +39,18 @@ export const Access = () => {
             })),
         [checkpoints],
     );
+
     const getCheckpointById = useCallback(
         (id: string) => checkpoints.find((c) => c.id === id),
         [checkpoints],
     );
+
+    useEffect(() => {
+        if (!checkpointId) return;
+
+        setSelectedCheckpoint(checkpointId);
+        setCurrentCheckpoint(getCheckpointById(checkpointId) ?? null);
+    }, [checkpointId, getCheckpointById]);
 
     const onSubmit = async ({ plateNumber, isEmergency }: AccessFormData) => {
         open('access', {

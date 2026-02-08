@@ -11,7 +11,6 @@ import {
     varchar,
 } from 'drizzle-orm/pg-core';
 
-
 export const eventTypeEnum = pgEnum('event_type', ['in', 'out']);
 export const resultTypeEnum = pgEnum('result_type', ['allowed', 'denied']);
 
@@ -24,6 +23,9 @@ export const adminUser = pgTable(
         password: text('password').notNull(), // Хэшированный пароль
         role: varchar('role', { length: 20 }).notNull().default('admin'), // admin, superadmin, moderator
         isActive: boolean('is_active').notNull().default(true),
+        defaultCheckpointId: uuid('default_checkpoint_id').references(() => checkpoints.id, {
+            onDelete: 'set null',
+        }),
         lastLoginAt: timestamp('last_login_at', { withTimezone: true }),
         createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
         updatedAt: timestamp('updated_at', { withTimezone: true })

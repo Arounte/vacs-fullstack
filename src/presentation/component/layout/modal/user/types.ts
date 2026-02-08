@@ -20,6 +20,7 @@ export function getUserFormSchema(isCreate: boolean) {
         email: getEmailValidationSchema(),
         password: getPasswordSchema(isCreate),
         role: getRoleValidationSchema(),
+        defaultCheckpointId: v.optional(v.string()),
         isActive: v.boolean(),
     });
 }

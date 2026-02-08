@@ -9,5 +9,6 @@ export const useAdminSessionStore = create<SessionState>()((set) => ({
     id: '',
     username: '',
     role: Role.Guest,
+    checkpointId: null,
     hydrate: (data) => set(data),
 }));

@@ -1,0 +1,2 @@
+ALTER TABLE "admin_user" ADD COLUMN "default_checkpoint_id" uuid;--> statement-breakpoint
+ALTER TABLE "admin_user" ADD CONSTRAINT "admin_user_default_checkpoint_id_checkpoints_id_fk" FOREIGN KEY ("default_checkpoint_id") REFERENCES "public"."checkpoints"("id") ON DELETE set null ON UPDATE no action;

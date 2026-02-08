@@ -21,7 +21,7 @@ export class SessionService {
 
     async getSession(req: IncomingMessage, res: ServerResponse<IncomingMessage>): Promise<Session> {
         const session = await this.session(req, res);
-        const { sid, id, username, role } = session;
+        const { sid, id, username, role, checkpointId } = session;
         const hasSession = !!id && !!sid && !!username && !!role;
         if (!hasSession) {
             throw Error('session_expired');
@@ -33,7 +33,11 @@ export class SessionService {
             throw Error('session_expired');
         }
 
-        const { username: newUsername, role: newRole } = await this.userRepository.findById(id);
+        const {
+            username: newUsername,
+            role: newRole,
+            defaultCheckpointId,
+        } = await this.userRepository.findById(id);
         const { ip, ua } = this.getMeta(req);
 
         await this.sessionRepository.update({
@@ -43,9 +47,10 @@ export class SessionService {
             userAgent: ua,
         });
 
-        if (username !== newUsername || role !== newRole) {
+        if (username !== newUsername || role !== newRole || checkpointId !== defaultCheckpointId) {
             session.username = newUsername;
             session.role = newRole as Role;
+            session.checkpointId = defaultCheckpointId;
 
             await session.save();
         }
@@ -59,7 +64,7 @@ export class SessionService {
         data: AdminUser,
         isInit = false,
     ): Promise<Session> {
-        const { id, username, role } = data;
+        const { id, username, role, defaultCheckpointId } = data;
         const session = await this.session(req, res);
 
         if (isInit) {
@@ -78,6 +83,7 @@ export class SessionService {
         session.id = id;
         session.username = username;
         session.role = role as Role;
+        session.checkpointId = defaultCheckpointId;
 
         await session.save();
 

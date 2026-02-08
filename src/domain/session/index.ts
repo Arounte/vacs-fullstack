@@ -14,6 +14,7 @@ export interface Session {
     id: string;
     username: string;
     role: Role;
+    checkpointId: string | null;
 }
 
 export interface CreateSessionData {
