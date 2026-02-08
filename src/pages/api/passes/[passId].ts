@@ -22,4 +22,12 @@ export default createRouter({
         },
         roles: [Role.Admin],
     },
+    DELETE: {
+        handler: async (req, res) => {
+            const result = await passService.delete(req.query.passId);
+
+            return res.status(200).json({ status: true, data: result });
+        },
+        roles: [Role.Admin],
+    }
 });

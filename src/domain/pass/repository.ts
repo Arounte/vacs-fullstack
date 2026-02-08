@@ -69,6 +69,10 @@ export class PassRepository {
                 .returning()
         )[0];
     }
+
+    async delete(id: string) {
+        return (await db.delete(passes).where(eq(passes.id, id)).returning())[0];
+    }
 }
 
 export const passRepository = new PassRepository();

@@ -39,7 +39,7 @@ export default function PassModal() {
         resolver: valibotResolver(PassFormSchema),
     });
     const { isValid } = useFormState({ control });
-    const { get, post, patch, isPending } = useAPI();
+    const { get, post, patch, del, isPending } = useAPI();
     const { showError } = useToast();
     const checkpointOptions = useMemo(
         () =>
@@ -106,6 +106,17 @@ export default function PassModal() {
         if (reason) showError(reason);
     };
 
+    const onDelete = async (id: string) => {
+        const { status, reason } = await del(`/passes/${id}`);
+        if (!status && reason) return showError(reason);
+
+        if (status) {
+            fetchPasses();
+
+            return requestClose();
+        }
+    };
+
     return (
         <Modal
             className="w-1/2"
@@ -151,12 +162,25 @@ export default function PassModal() {
                         disabled={initializing || !isAdmin}
                     />
                 )}
-                <Button
-                    loading={isPending}
-                    type="submit"
-                    label="Сохранить"
-                    disabled={!isValid || initializing || !isAdmin}
-                />
+                <div className="grid gap-4 grid-flow-col">
+                    {!isCreate && (
+                        <Button
+                            type="button"
+                            loading={isPending}
+                            severity="danger"
+                            label="Удалить"
+                            icon="pi pi-trash"
+                            disabled={initializing || !isAdmin}
+                            onClick={() => onDelete(id)}
+                        />
+                    )}
+                    <Button
+                        loading={isPending}
+                        type="submit"
+                        label="Сохранить"
+                        disabled={!isValid || initializing || !isAdmin}
+                    />
+                </div>
             </form>
         </Modal>
     );

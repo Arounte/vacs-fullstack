@@ -64,6 +64,15 @@ export class PassService {
             validTo: result.validTo ? new Date(result.validTo) : undefined,
         });
     }
+
+    async delete(id?: string | string[]) {
+        if (!id) throw new ApiError('empty_id');
+
+        const existing = this.passRepository.delete(Array.isArray(id) ? id[0] : id);
+        if (!existing) throw new ApiError('pass_not_found');
+
+        return existing;
+    }
 }
 
 export const passService = new PassService(passRepository);
