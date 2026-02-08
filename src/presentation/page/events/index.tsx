@@ -13,7 +13,7 @@ export const Events = () => {
                 <h1 className="text-xl font-bold">Список событий</h1>
             </div>
             <div className="flex-1 min-h-0 rounded-md border border-gray-200 bg-white overflow-auto">
-                <DataTable value={events} scrollable scrollHeight="flex">
+                <DataTable value={events} paginator rows={10} scrollable scrollHeight="flex">
                     {columns.map((col) => (
                         <Column key={col.field} {...col} />
                     ))}
