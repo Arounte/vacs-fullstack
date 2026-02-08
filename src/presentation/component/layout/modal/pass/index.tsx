@@ -1,7 +1,9 @@
 import { useCheckpointStore } from '@/data/checkpoint/store';
 import { useModalStore } from '@/data/modal';
 import { usePassStore } from '@/data/pass';
+import { useAdminSessionStore } from '@/data/session/store';
 import { useVehicleStore } from '@/data/vehicle/store';
+import { Role } from '@/domain/session';
 import type { Pass } from '@/framework/db/schema';
 import { Calendar } from '@/presentation/component/form/calendar';
 import { Select } from '@/presentation/component/form/select';
@@ -18,11 +20,13 @@ import { type PassFormData, PassFormSchema } from './types';
 
 export default function PassModal() {
     const { requestClose, getProps } = useModalStore();
+    const { role } = useAdminSessionStore();
     const { setPasses } = usePassStore();
     const { checkpoints } = useCheckpointStore();
     const { vehicles } = useVehicleStore();
     const { id } = getProps('pass') ?? {};
     const isCreate = !id;
+    const isAdmin = role === Role.Admin;
     const [initializing, setInitializing] = useState(true);
     const { control, handleSubmit, reset } = useForm<PassFormData>({
         defaultValues: {
@@ -115,6 +119,7 @@ export default function PassModal() {
                     label="Номер ТС"
                     initializing={initializing}
                     options={vehicleOptions}
+                    disabled={!isAdmin}
                 />
                 <Select
                     name="checkpointId"
@@ -122,32 +127,35 @@ export default function PassModal() {
                     label="Пропускной пункт"
                     initializing={initializing}
                     options={checkpointOptions}
+                    disabled={!isAdmin}
                 />
                 <Calendar
                     name="validFrom"
                     control={control}
                     label="Начало действия"
                     initializing={initializing}
+                    disabled={!isAdmin}
                 />
                 <Calendar
                     name="validTo"
                     control={control}
                     label="Окончание действия"
                     initializing={initializing}
+                    disabled={!isAdmin}
                 />
                 {!isCreate && (
                     <Switch
                         label="Активен"
                         name="isActive"
                         control={control}
-                        disabled={initializing}
+                        disabled={initializing || !isAdmin}
                     />
                 )}
                 <Button
                     loading={isPending}
                     type="submit"
                     label="Сохранить"
-                    disabled={!isValid || initializing}
+                    disabled={!isValid || initializing || !isAdmin}
                 />
             </form>
         </Modal>

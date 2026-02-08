@@ -61,6 +61,10 @@ export class AccessEventService {
         });
     }
 
+    async getAllEvents(): Promise<AccessEvent[]> {
+        return this.accessEventRepository.findAll();
+    }
+
     async request(data: unknown): Promise<AccessEventRequestResponse> {
         const parsed = v.parse(RequestDataSchema, data);
         const checkpoint = await this.checkpointService.getById(parsed.checkpointId);
@@ -226,6 +230,7 @@ export class AccessEventService {
             checkpointName: request.checkpointName,
             timestamp: now,
             result: 'denied',
+            reason: request.reason,
         });
 
         this.invalidRequests.delete(key);

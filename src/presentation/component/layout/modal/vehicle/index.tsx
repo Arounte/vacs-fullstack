@@ -1,5 +1,7 @@
 import { useModalStore } from '@/data/modal';
+import { useAdminSessionStore } from '@/data/session/store';
 import { useVehicleStore } from '@/data/vehicle/store';
+import { Role } from '@/domain/session';
 import { type CreateVehicleData, CreateVehicleSchema } from '@/domain/vehicle';
 import type { Vehicle } from '@/framework/db/schema';
 import { Input } from '@/presentation/component/form/input';
@@ -14,7 +16,9 @@ import { Modal } from '../common';
 export default function VehicleModal() {
     const { requestClose, getProps } = useModalStore();
     const { setVehicles } = useVehicleStore();
+    const { role } = useAdminSessionStore();
     const { id } = getProps('vehicle') ?? {};
+    const isAdmin = role === Role.Admin;
     const [initializing, setInitializing] = useState(true);
     const isCreate = !id;
     const { control, handleSubmit, reset, watch } = useForm<CreateVehicleData>({
@@ -98,6 +102,7 @@ export default function VehicleModal() {
                     control={control}
                     initializing={initializing}
                     autoComplete="off"
+                    readOnly={!isAdmin}
                 />
                 <Input
                     label="Имя владельца"
@@ -105,6 +110,7 @@ export default function VehicleModal() {
                     control={control}
                     initializing={initializing}
                     autoComplete="off"
+                    readOnly={!isAdmin}
                 />
                 <Input
                     label="Номер телефона владельца"
@@ -112,6 +118,7 @@ export default function VehicleModal() {
                     control={control}
                     initializing={initializing}
                     autoComplete="off"
+                    readOnly={!isAdmin}
                 />
                 <Input
                     label="Марка ТС"
@@ -119,6 +126,7 @@ export default function VehicleModal() {
                     control={control}
                     initializing={initializing}
                     autoComplete="off"
+                    readOnly={!isAdmin}
                 />
                 <div className="grid gap-4 grid-flow-col">
                     {!isCreate && (
@@ -128,7 +136,7 @@ export default function VehicleModal() {
                             severity="danger"
                             label="Удалить"
                             icon="pi pi-trash"
-                            disabled={initializing}
+                            disabled={initializing || !isAdmin}
                             onClick={() => onDelete(id)}
                         />
                     )}
@@ -137,7 +145,7 @@ export default function VehicleModal() {
                         type="submit"
                         label="Сохранить"
                         icon="pi pi-check-circle"
-                        disabled={!isValid || initializing}
+                        disabled={!isValid || initializing || !isAdmin}
                     />
                 </div>
             </form>

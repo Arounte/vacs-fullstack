@@ -1,7 +1,7 @@
 import { useModalStore } from '@/data/modal';
 import { useAdminSessionStore } from '@/data/session/store';
 import { Role } from '@/domain/session';
-import { CHECKPOINTS, HOME, LOGOUT, LOGS, PASSES, USERS, VEHICLES } from '@/framework/routes';
+import { CHECKPOINTS, EVENTS, HOME, LOGOUT, PASSES, USERS, VEHICLES } from '@/framework/routes';
 import { useRouter } from 'next/router';
 import { Button } from 'primereact/button';
 import { Menu } from 'primereact/menu';
@@ -38,7 +38,7 @@ const ITEMS = (role: Role, push: (url: string) => Promise<boolean>): MenuItem[] 
     {
         label: 'Журнал событий',
         icon: 'pi pi-list-check',
-        command: () => push(LOGS),
+        command: () => push(EVENTS),
     },
     ...(role === Role.Admin
         ? [

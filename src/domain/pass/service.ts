@@ -31,6 +31,7 @@ export class PassService {
                 .where(
                     and(
                         eq(passes.checkpointId, checkpointId),
+                        eq(passes.isActive, true),
                         eq(passes.vehicleId, vehicleId),
                         lte(passes.validFrom, now),
                         gte(passes.validTo, now),
