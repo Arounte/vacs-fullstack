@@ -9,7 +9,8 @@ export type ReasonT =
     | 'overlapping_pass_exists'
     | 'invalid_valid_from_field'
     | 'vehicle_not_found'
-    | 'internal_server_error';
+    | 'internal_server_error'
+    | 'forbidden';
 
 export const MAP_REASON_TO_MESSAGE: Record<ReasonT, string> = {
     checkpoint_not_found: 'Пропускной пункт не найден',
@@ -23,4 +24,5 @@ export const MAP_REASON_TO_MESSAGE: Record<ReasonT, string> = {
     invalid_valid_from_field: 'Неверная дата начала действия',
     vehicle_not_found: 'Транспортное средство не найдено',
     internal_server_error: 'Внутренняя ошибка сервера',
+    forbidden: 'Не хватает прав доступа',
 };
